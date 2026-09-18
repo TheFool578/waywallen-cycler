@@ -43,6 +43,7 @@ export default class WaywallenCycler extends Extension {
                 (conn, res) => {
                     try {
                         conn.call_finish(res);
+                        Main.notify('Waywallen Cycler', method === 'Next' ? 'Siguiente Fondo' : 'Fondo Anterior');
                     } catch(e) {
                         console.log('WaywallenCycler ERROR ' + method + ': ' + e);
                     }
