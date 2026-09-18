@@ -18,7 +18,7 @@ Funciona llamando por D-Bus al daemon de Waywallen:
 
 - GNOME Shell 50 (ver `metadata.json` → `shell-version`)
 - Waywallen corriendo en el mismo bus de sesión (nativo / AppImage).
-  Con Waywallen en Flatpak confinado el nombre D-Bus no se ve desde el host y no funcionará.
+  probado con Flatpak system 0.3.9 en Fedora 44.
 - Waywallen con al menos 2 fondos / playlist activa para que se note el cambio.
 
 ## Instalación
