@@ -2,7 +2,7 @@
     "uuid": "waywallen-cycler@david.local",
     "name": "Waywallen Cycler",
     "description": "Cambia de fondo de Waywallen con atajo de teclado",
-    "shell-version": ["50"],
+    "shell-version": ["50", "51"],
     "settings-schema": "org.gnome.shell.extensions.waywallen-cycler",
     "version": 2
 }
