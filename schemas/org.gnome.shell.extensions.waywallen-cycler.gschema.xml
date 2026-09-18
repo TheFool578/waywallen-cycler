@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <schema id="org.gnome.shell.extensions.waywallen-cycler" path="/org/gnome/shell/extensions/waywallen-cycler/">
+        <key name="next-wallpaper" type="as">
+            <default><![CDATA[['<Control><Shift>Right']]]></default>
+            <summary>Siguiente fondo</summary>
+            <description>Pasar al siguiente fondo de Waywallen</description>
+        </key>
+        <key name="prev-wallpaper" type="as">
+            <default><![CDATA[['<Control><Shift>Left']]]></default>
+            <summary>Fondo anterior</summary>
+            <description>Volver al fondo anterior de Waywallen</description>
+        </key>
+    </schema>
+</schemalist>
