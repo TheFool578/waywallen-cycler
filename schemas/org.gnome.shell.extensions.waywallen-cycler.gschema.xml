@@ -11,5 +11,15 @@
             <summary>Fondo anterior</summary>
             <description>Volver al fondo anterior de Waywallen</description>
         </key>
+        <key name="show-osd" type="b">
+            <default>true</default>
+            <summary>Mostrar OSD</summary>
+            <description>Mostrar cartel abajo al cambiar de fondo</description>
+        </key>
+        <key name="show-notification" type="b">
+            <default>true</default>
+            <summary>Mostrar notificación</summary>
+            <description>Mostrar burbuja arriba al cambiar de fondo</description>
+        </key>
     </schema>
 </schemalist>
