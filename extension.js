@@ -67,15 +67,43 @@ export default class WaywallenCycler extends Extension {
             try {
                 const result = conn.call_finish(res);
                 const id = result.deepUnpack()[0].deepUnpack();
-                if (this._settings && this._settings.get_boolean('show-osd'))
-                    Main.osdWindowManager.showAll(Gio.ThemedIcon.new('image-x-generic'), 'Fondo: ' + id, null, null);
-                if (this._settings && this._settings.get_boolean('show-notification'))
-                    Main.notify('Waywallen Cycler', 'Fondo: ' + id);
+                this._showWithInfo(id);
             } catch (e) {
-                console.log('WaywallenCycler ERROR get ID' + e);
+                console.log('waywallenCycler ERROR get ID: ' + e);
             }
         }
         );
+    }
+
+    _showWithInfo(id) {
+        try {
+            const script = this.path + '/get_wallpaper_info.py';
+            const proc = Gio.Subprocess.new(
+                    ['python3', script, String(id)],
+                    Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_PIPE
+                    );
+            proc.communicate_utf8_async(null, null, (p, res) => {
+                try {
+                    const [, stdout] = p.communicate_utf8_finish(res);
+                    const info = JSON.parse(stdout);
+                    const name = info.name ?? ('Fondo ' + id);
+                    let icon = Gio.ThemedIcon.new('image-x-generic');
+                    if (info.preview) {
+                        const f = Gio.File.new_for_path(info.preview);
+                        if (f.query_exists(null))
+                            icon = Gio.FileIcon.new(f);
+                    }
+                    if (this._settings && this._settings.get_boolean('show-osd'))
+                        Main.osdWindowManager.showAll(icon, name, null, null);
+                    if (this._settings && this._settings.get_boolean('show-notification'))
+                        Main.notify('Waywallen Cycler', name);
+                } catch (e) {
+                    console.log('WaywallenCycler ERROR info: ' + e);
+                }
+            });
+        } catch (e) {
+            console.log('WaywallenCycler ERROR spawn: ' + e);
+        }
     }
 
     disable() {
