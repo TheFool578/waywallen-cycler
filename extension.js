@@ -8,6 +8,7 @@ import GLib from 'gi://GLib';
 export default class WaywallenCycler extends Extension {
     enable() {
         this._settings = this.getSettings();
+        this._lastChange = 0;
 
         Main.wm.addKeybinding(
                 'next-wallpaper',
@@ -31,6 +32,12 @@ export default class WaywallenCycler extends Extension {
     }
 
     _callWaywallen(method, attempt = 0) {
+        if (attempt === 0) {
+            const now = Date.now();
+            if (now - (this.lastChange || 0) < 2000)
+                return;
+            this._lastChange = now;
+        }
         Gio.DBus.session.call(
                 'org.waywallen.waywallen.Daemon',
                 '/org/waywallen/waywallen/Daemon',
@@ -88,7 +95,7 @@ export default class WaywallenCycler extends Extension {
                     const info = JSON.parse(stdout);
                     const allowHidden = this._settings ? this._settings.get_boolean('allow-hidden') : true;
                     if (info.hidden && !allowHidden) {
-                        if (attempt < 20) {
+                        if (attempt < 5) {
                             this._callWaywallen(method, attempt + 1);
                             return;
                         }
