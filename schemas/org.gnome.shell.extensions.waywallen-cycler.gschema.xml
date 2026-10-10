@@ -21,5 +21,10 @@
             <summary>Mostrar notificación</summary>
             <description>Mostrar burbuja arriba al cambiar de fondo</description>
         </key>
+        <key name="allow-hidden" type="b">
+            <default>true</default>
+            <summary>permitir ocultos</summary>
+            <description>Si esta apagado, salta los fondos ocultos</description>
+        </key>
     </schema>
 </schemalist>

@@ -60,6 +60,7 @@ export default class WaywallenCyclerPrefs extends ExtensionPreferences {
         for (const [key, title] of [
             ['show-osd', 'Mostrar cartel abajo (OSD)'],
             ['show-notification', 'Mostrar burbuja arriba'],
+            ['allow-hidden', 'Permitir ocultos'],
         ]) {
             const row = new Adw.SwitchRow({title});
             settings.bind(key, row, 'active', Gio.SettingsBindFlags.DEFAULT);

@@ -9,12 +9,12 @@ def main():
     db = os.path.expanduser("~/.var/app/org.waywallen.waywallen/data/waywallen/waywallen-v2.db")
     con = sqlite3.connect(db)
     cur = con.cursor()
-    cur.execute("SELECT display_name, path, preview_path, library_id FROM item WHERE id=?", (wid,))
+    cur.execute("SELECT display_name, path, preview_path, library_id, hidden FROM item WHERE id=?", (wid,))
     row = cur.fetchone()
     if not row:
         print(json.dumps({"error": f"id {wid} no encontrado"}))
         return 1
-    name, path, preview_rel, lib_id = row
+    name, path, preview_rel, lib_id, hidden = row
     cur.execute("SELECT path FROM library WHERE id=?", (lib_id,))
     librow = cur.fetchone()
     base = librow[0] if librow else ""
@@ -26,7 +26,7 @@ def main():
         preview_abs = cand1 if os.path.exists(cand1) else cand2
     else:
         preview_abs = preview_rel
-    print(json.dumps({"id": wid, "name": name, "preview": preview_abs}))
+    print(json.dumps({"id": wid, "name": name, "preview": preview_abs, "hidden": bool(hidden)}))
     return 0
 
 if __name__ == "__main__":

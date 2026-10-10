@@ -15,7 +15,7 @@ export default class WaywallenCycler extends Extension {
                 Meta.KeyBindingFlags.NONE,
                 Shell.ActionMode.NORMAL,
                 () => {
-            this._callWaywallen('Next');
+            this._callWaywallen('Next', 0);
         }
         );
 
@@ -25,12 +25,12 @@ export default class WaywallenCycler extends Extension {
                 Meta.KeyBindingFlags.NONE,
                 Shell.ActionMode.NORMAL,
                 () => {
-            this._callWaywallen('Previous');
+            this._callWaywallen('Previous', 0);
         }
         );
     }
 
-    _callWaywallen(method) {
+    _callWaywallen(method, attempt = 0) {
         Gio.DBus.session.call(
                 'org.waywallen.waywallen.Daemon',
                 '/org/waywallen/waywallen/Daemon',
@@ -44,7 +44,7 @@ export default class WaywallenCycler extends Extension {
                 (conn, res) => {
             try {
                 conn.call_finish(res);
-                this._getCurrentId();
+                this._getCurrentId(method, attempt);
             } catch (e) {
                 console.log('WaywallenCycler ERROR ' + method + ': ' + e);
             }
@@ -52,7 +52,7 @@ export default class WaywallenCycler extends Extension {
         );
     }
 
-    _getCurrentId() {
+    _getCurrentId(method, attempt) {
         Gio.DBus.session.call(
                 'org.waywallen.waywallen.Daemon',
                 '/org/waywallen/waywallen/Daemon',
@@ -67,7 +67,7 @@ export default class WaywallenCycler extends Extension {
             try {
                 const result = conn.call_finish(res);
                 const id = result.deepUnpack()[0].deepUnpack();
-                this._showWithInfo(id);
+                this._showWithInfo(id, method, attempt);
             } catch (e) {
                 console.log('waywallenCycler ERROR get ID: ' + e);
             }
@@ -75,7 +75,7 @@ export default class WaywallenCycler extends Extension {
         );
     }
 
-    _showWithInfo(id) {
+    _showWithInfo(id, method, attempt) {
         try {
             const script = this.path + '/get_wallpaper_info.py';
             const proc = Gio.Subprocess.new(
@@ -86,6 +86,13 @@ export default class WaywallenCycler extends Extension {
                 try {
                     const [, stdout] = p.communicate_utf8_finish(res);
                     const info = JSON.parse(stdout);
+                    const allowHidden = this._settings ? this._settings.get_boolean('allow-hidden') : true;
+                    if (info.hidden && !allowHidden) {
+                        if (attempt < 20) {
+                            this._callWaywallen(method, attempt + 1);
+                            return;
+                        }
+                    }
                     const name = info.name ?? ('Fondo ' + id);
                     let icon = Gio.ThemedIcon.new('image-x-generic');
                     if (info.preview) {
